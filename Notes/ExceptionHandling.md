@@ -56,34 +56,16 @@ namespace ExceptionHandling
             {
                 DeveloperExceptionPageOptions developerExceptionPageOptions = new DeveloperExceptionPageOptions
                 {
-                    SourceCodeLineCount=0
+                    SourceCodeLineCount=10
                 };
                 app.UseDeveloperExceptionPage(developerExceptionPageOptions);
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
             app.Run(async context =>
             {
                 throw new Exception("Some error processing the request");
                 await context.Response.WriteAsync("Hello wrold");
             });
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+           
             
         }
     }
