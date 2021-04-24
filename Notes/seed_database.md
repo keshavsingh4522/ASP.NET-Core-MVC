@@ -1,3 +1,4 @@
+### Method 1
 - In ApplicationDbContext
 
 <details>
@@ -67,6 +68,7 @@ namespace Razor_Pages.Models
   
 </details>
 
+### Method 2
 - if you want to clean your ApplicationDbContext then add a model static class like ModelBuilderExtensions
 
 <details>
