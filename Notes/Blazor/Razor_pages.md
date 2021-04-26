@@ -11,4 +11,8 @@ two methods
   - make this class partial with partial keyword
 - Base class
   - add a clas with same name+Base for example CounterBase
+  - inherit from ComponentBase class
+  -  and write below code in razor page
+@inherits CounterBase
+  - make all member or method protected or public
 ```
