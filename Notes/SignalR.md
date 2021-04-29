@@ -103,12 +103,61 @@ namespace SignalRHub
 
 ```
 
+<details>
+  <summar>when user connceted -> chathub.cs code</summary>
+  
+  ```c#
+  using Microsoft.AspNetCore.SignalR;
+using SignalRHub.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SignalRHub
+{
+    public class ChatHub : Hub
+    {
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.Caller.SendAsync(
+                "ReceiveMessage",
+                "Keshav Singh",
+                DateTimeOffset.UtcNow,
+                "hello what can we help with you today!");
+            await base.OnConnectedAsync();
+        }
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            return base.OnDisconnectedAsync(exception);
+        }
+        public async Task SendMessage(string name, string text)
+        {
+            var message = new ChatMessage
+            {
+                SenderName = name,
+                Text = text,
+                SendAt = DateTimeOffset.UtcNow
+            };
+
+            // Broadcast to all clients
+            await Clients.All.SendAsync(
+                "ReceiveMessage",
+                message.SenderName,
+                message.SendAt,
+                message.Text);
+
+        }
+    }
+}
+  ```
+  
+</details>
+
 </details>
 
 
-```
-to save the history of message create model class
-```
+- to save the history of message create model class
 
 <details>
   <summary>model class ==> ChatMessage.cs</summary>
