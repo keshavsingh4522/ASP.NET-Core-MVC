@@ -284,3 +284,22 @@ document.addEventListener('DOMContentLoaded', ready);
 ```  
   
 </details>
+
+- How groups work in SignalR
+```
+```
+
+<details>
+  <summary></summary>
+  
+  ![2021-04-29 (4)](https://user-images.githubusercontent.com/43788985/116580490-0c501a80-a931-11eb-9b59-91dd56a12dbf.png)
+  
+</details>
+
+- what to use groups for
+```
+- caht rooms and channels
+- Topic subscriptions
+- Any other collection of connections
+```
+- create a different group for each visitor so that they any other cannot see message.
