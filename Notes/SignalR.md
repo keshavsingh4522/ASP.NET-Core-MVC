@@ -70,8 +70,7 @@ client access method which is defined in hub, so create a sendmessage method in 
 <details>
   <summary>Hub Class ==> ChatHub.cs</summary>
   
-```c#
-using Microsoft.AspNetCore.SignalR;
+```using Microsoft.AspNetCore.SignalR;
 using SignalRHub.Models;
 using System;
 using System.Collections.Generic;
@@ -80,23 +79,24 @@ using System.Threading.Tasks;
 
 namespace SignalRHub
 {
-    public class ChatHub:Hub
+    public class ChatHub : Hub
     {
         public async Task SendMessage(string name, string text)
         {
             var message = new ChatMessage
             {
-                SenderName=name,
-                Text=text,
-                SendAt=DateTimeOffset.UtcNow
+                SenderName = name,
+                Text = text,
+                SendAt = DateTimeOffset.UtcNow
             };
 
-            // BroadCast to all Clients
+            // Broadcast to all clients
             await Clients.All.SendAsync(
-                "ReceiveMessgae",
+                "ReceiveMessage",
                 message.SenderName,
                 message.SendAt,
                 message.Text);
+
         }
     }
 }
@@ -143,3 +143,95 @@ namespace SignalRHub.Models
                 endpoints.MapHub<ChatHub>("/chatHub");
             })
 ```
+- Add javascript files
+```html
+<script src="https://unpkg.com/@@aspnet/signalr@@1.0.2/dist/browser/signalr.js" integrity="sha384-gjN8HGdgW45EWYHOqrWrZ8XHLv1zKBralQ9UU94n//6MvoCdsF3NJrBt9FssrFK3" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js" integrity="sha256-CutOzxCRucUsn6C6TcEYsauvvYilEniTXldPa6/wu0k=" crossorigin="anonymous"></script>
+```
+- in Index.chtml dialog code
+```html
+<div id="chatDialog" title="Chat with support">
+    <div id="chatMainPanel">
+        <ul id="chatHistory"></ul>
+        <div id="bottomPanel">
+            <form id="chatForm">
+                <input autocomplete="off"  id="messageTextbox" type="text" placeholder="Type a message" />
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+```
+- JS Code
+<details>
+  <summary></summary>
+  
+```js
+var chatterName = 'Visitor';
+
+// Initialize the SignalR client
+var connection = new signalR.HubConnectionBuilder()
+    .withUrl('/chatHub')
+    .build();
+
+connection.on('ReceiveMessage', renderMessage);
+
+connection.start();
+
+
+function showChatDialog() {
+    var dialogEl = document.getElementById('chatDialog');
+    dialogEl.style.display = 'block';
+}
+
+function sendMessage(text) {
+    if (text && text.length) {
+        connection.invoke('SendMessage', chatterName, text);
+    }
+}
+
+function ready() {
+    setTimeout(showChatDialog, 750);
+
+    var chatFormEl = document.getElementById('chatForm');
+    chatFormEl.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var text = e.target[0].value;
+        e.target[0].value = '';
+        sendMessage(text);
+    })
+}
+
+
+function renderMessage(name, time, message) {
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'name';
+    nameSpan.textContent = name;
+
+    var timeSpan = document.createElement('span');
+    timeSpan.className = 'time';
+    var friendlyTime = moment(time).format('H:mm');
+    timeSpan.textContent = friendlyTime;
+
+    var headerDiv = document.createElement('div');
+    headerDiv.appendChild(nameSpan);
+    headerDiv.appendChild(timeSpan);
+
+    var messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    messageDiv.textContent = message;
+
+    var newItem = document.createElement('li');
+    newItem.appendChild(headerDiv);
+    newItem.appendChild(messageDiv);
+
+    var chatHistoryEl = document.getElementById('chatHistory');
+    chatHistoryEl.appendChild(newItem);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight - chatHistoryEl.clientHeight;
+}
+
+document.addEventListener('DOMContentLoaded', ready);
+```  
+  
+</details>
