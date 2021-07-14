@@ -1,0 +1,53 @@
+Parameters:
+    SecurityGroupDescription:
+        Description: Security Group Description
+        Type: String
+
+Resources:
+    MyInstance:
+        Type: AWS::EC2::Instance
+        Properties:
+            AvailabilityZone: us-east-1a
+            ImageId: ami-a4c7edb2
+            InstanceType: t2.micro
+            SecurityGroups:
+                - !Ref SSHSecurityGroup
+                - !Ref ServerSecurityGroup
+
+# an elastic IP for Our Instance
+    MyEIP:
+        Type: AWS::EC2::EIP
+        Properties:
+            InstanceId: !Ref My Instance
+
+# Our Security Group
+    SSHSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable SSh access via port 22
+            SecurityGroupIngress:
+            - CidRip: 0.0.0.0/0
+              FromPort: 22
+              InProtocol: tcp
+              ToPort: 22
+
+#Our second ec2 instance security group
+    SSHSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Enable SSh access via port 22
+            SecurityGroupIngress:
+            - InProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              CidRip: 0.0.0.0/0
+            - InProtocol: tcp
+              FromPort: 22
+              ToPort: 22
+              CidRip: 192.168.1.1/32
+
+# outputs
+Outputs:
+    ElasticIP:
+        Description: Elastic IP Value
+        Value: !Ref MyEIP

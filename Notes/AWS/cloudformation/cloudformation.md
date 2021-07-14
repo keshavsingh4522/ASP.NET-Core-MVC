@@ -1,0 +1,2 @@
+- search cloud formation
+- select vergenia(us-east-1) region otherwise things will not work
